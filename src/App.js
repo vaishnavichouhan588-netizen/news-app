@@ -52,7 +52,7 @@ export default class App extends Component {
  key="sports"pageSize={this.pageSize} country="in" category="sports" />} />
           <Route path="/technology" element={<News setProgress={this.setProgress} apiKey={this.apiKey}
  key="technology"pageSize={this.pageSize} country="in" category="technology" />} />
-          
+         <Route path="/search" element={<News setProgress={this.setProgress} apiKey={this.apiKey} key={window.location.search} pageSize={this.pageSize} category="general" />} /> 
       
        </Routes>
        </Router>

@@ -2,6 +2,21 @@ import React, { Component } from 'react'
 import { Link } from 'react-router-dom';
 
 export default class NavBar extends Component {
+  constructor() {
+    super();
+    this.state ={
+      searchQuery:""
+    };
+  }
+  handleInputChange=(event)=>{
+    this.setState({ searchQuery: event.target.value});
+  }
+  handleSearchSubmit =(event) =>{
+    event.preventDefault();
+    if(this.state.searchQuery.trim()!==""){
+      window.location.href =`/search?q=${this.state.searchQuery}`;
+    }
+  }
   render() {
     return (
       <div>
@@ -26,7 +41,20 @@ export default class NavBar extends Component {
 
             
              </ul>
-       
+                <form onSubmit={this.handleSearchSubmit} className="d-flex" role="search">
+                <input 
+                    className="form-control form-control-sm me-2 rounded-pill" 
+                    type="search" 
+                    placeholder="Search news..." 
+                    aria-label="Search"
+                    value={this.state.searchQuery}
+                    onChange={this.handleInputChange}
+                />
+                <button className="btn btn-sm btn-outline-light rounded-pill px-3" type="submit">
+                    Search
+                </button>
+            </form>
+
     
         </div>
         </div>

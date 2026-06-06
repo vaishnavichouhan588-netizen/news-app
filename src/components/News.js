@@ -29,10 +29,16 @@ export class News extends Component{
      }
      document.title=`${this.capital(this.props.category)} - NewsNova`;
   }
+
   async updateNews(){
     this.props.setProgress(10);
-    const url =`https://newsapi.org/v2/top-headlines?q=${this.props.q}&category=${this.props.category}&apiKey=${this.props.apiKey}&page=${this.state.page}&pageSize=${this.props.pageSize}`;
-   this.setState({loading:true});
+    const urlParams = new URLSearchParams(window.location.search);
+    const searchQuery = urlParams.get('q') || "";
+
+    const url = searchQuery?`https://newsapi.org/v2/everything?q=${searchQuery}&apiKey=${this.props.apiKey}&page=${this.state.page}&pageSize=${this.props.pageSize}`
+    : `https://newsapi.org/v2/top-headlines?q=${this.props.q}&category=${this.props.category}&apiKey=${this.props.apiKey}&page=${this.state.page}&pageSize=${this.props.pageSize}`;
+   
+    this.setState({loading:true});
     
    let data = await fetch(url);
      this.props.setProgress(30);
@@ -42,9 +48,16 @@ export class News extends Component{
    this.setState({articles: parseData.articles, totalResults: parseData.totalResults, loading:false, })
    this.props.setProgress(100);
   }
+
+
  async componentDidMount(){
   this.props.setProgress(10);
-   let url =`https://newsapi.org/v2/top-headlines?q=${this.props.q}&category=${this.props.category}&apiKey=${this.props.apiKey}&page=${this.state.page}&pageSize=${this.props.pageSize}`;
+   const urlParams = new URLSearchParams(window.location.search);
+    const searchQuery = urlParams.get('q') || "";
+   
+   let url = searchQuery 
+      ? `https://newsapi.org/v2/everything?q=${searchQuery}&apiKey=${this.props.apiKey}&page=${this.state.page}&pageSize=${this.props.pageSize}`
+      : `https://newsapi.org/v2/top-headlines?q=${this.props.q}&category=${this.props.category}&apiKey=${this.props.apiKey}&page=${this.state.page}&pageSize=${this.props.pageSize}`;
    this.setState({loading:true});
    let data = await fetch(url);
    this.props.setProgress(60);
@@ -76,19 +89,28 @@ export class News extends Component{
 }
  
    fetchMoreData =async ()=>{
-    this.setState({page: this.state.page+1})
-     const url =`https://newsapi.org/v2/top-headlines?q=${this.props.q}&category=${this.props.category}&apiKey=${this.props.apiKey}&page=${this.state.page}&pageSize=${this.props.pageSize}`;
-   let data = await fetch(url);
+    const nextPage = this.state.page + 1;
+    this.setState({page: nextPage})
+    const urlParams = new URLSearchParams(window.location.search);
+    const searchQuery = urlParams.get('q') || ""; 
+
+    const url = searchQuery 
+      ? `https://newsapi.org/v2/everything?q=${searchQuery}&apiKey=${this.props.apiKey}&page=${nextPage}&pageSize=${this.props.pageSize}`
+      : `https://newsapi.org/v2/top-headlines?q=${this.props.q}&category=${this.props.category}&apiKey=${this.props.apiKey}&page=${nextPage}&pageSize=${this.props.pageSize}` 
+
+     let data = await fetch(url);
    let parseData = await data.json()
    console.log(parseData);
    this.setState({articles: this.state.articles.concat(parseData.articles), totalResults: parseData.totalResults })
    };
 
   render() {
-  
+       const urlParams = new URLSearchParams(window.location.search);
+        const searchQuery = urlParams.get('q');
     return (
       <>
-        <h2 className="text-center" style={{margin:'35px 0px', marginTop:'90px'}}>NewsNova - Top {this.capital(this.props.category)} Headlines</h2>
+       
+        <h2 className="text-center" style={{margin:'35px 0px', marginTop:'90px'}}>{searchQuery ? `Search Results for: ${this.capital(searchQuery)}` :`NewsNova - Top ${this.capital(this.props.category)} Headlines`}</h2>
        { this.state.loading &&<Spinner/>} 
         <InfiniteScroll 
         dataLength={this.state.articles.length}
