@@ -25,10 +25,13 @@ export class News extends Component{
     articles: [],
     loading: true,
     page:1,
-    totalResults:0
+    totalResults:0,
+    isPlaylistSpeaking: false,
+    currentPlayingIndex: -1
      }
      document.title=`${this.capital(this.props.category)} - NewsNova`;
   }
+
 
   async updateNews(){
     this.props.setProgress(10);
@@ -103,6 +106,7 @@ export class News extends Component{
    console.log(parseData);
    this.setState({articles: this.state.articles.concat(parseData.articles), totalResults: parseData.totalResults })
    };
+    
 
   render() {
        const urlParams = new URLSearchParams(window.location.search);
@@ -111,6 +115,7 @@ export class News extends Component{
       <>
        
         <h2 className="text-center" style={{margin:'35px 0px', marginTop:'90px'}}>{searchQuery ? `Search Results for: ${this.capital(searchQuery)}` :`NewsNova - Top ${this.capital(this.props.category)} Headlines`}</h2>
+        
        { this.state.loading &&<Spinner/>} 
         <InfiniteScroll 
         dataLength={this.state.articles.length}
